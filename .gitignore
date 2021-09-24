@@ -1,0 +1,6 @@
+*.exe
+*.dsym
+main
+FloppySquare
+web/
+*.zip
