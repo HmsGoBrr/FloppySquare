@@ -20,4 +20,6 @@ Available on https://hmsgobrr.itch.io/floppy-square
         make RAYLIB_PATH=/path/to/raylib OBJS=src/*.cpp RAYLIB_LIBTYPE=SHARED
         ```
 
-Output is in the project folder
+Output is in the project folder.
+
+Note: This game might have some bugs

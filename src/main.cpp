@@ -3,8 +3,7 @@
 #include "Player.h"
 
 #if defined(PLATFORM_WEB)
-    #include <emscripten/emscripten.h>
-    #define powf32 powf
+#include <emscripten/emscripten.h>
 #endif
 
 const int screenWidth = 800;
@@ -18,7 +17,7 @@ struct Tube {
 };
 
 const int maxTubes = 4;
-Tube tubes[maxTubes*2];
+Tube tubes[maxTubes * 2];
 Vector2 tubesPos[maxTubes];
 float tubeSpeed;
 
@@ -44,8 +43,8 @@ void init(Player* plr) {
 
     scoreBlink = false;
 
-    camera.target = { screenWidth/2.0f, screenHeight/2.0f };
-    camera.offset = { screenWidth/2.0f, screenHeight/2.0f };
+    camera.target = { screenWidth / 2.0f, screenHeight / 2.0f };
+    camera.offset = { screenWidth / 2.0f, screenHeight / 2.0f };
     camera.rotation = 0.0f;
     camera.zoom = 1.0f;
 
@@ -55,21 +54,21 @@ void init(Player* plr) {
     tubeSpeed = 1;
 
     for (int i = 0; i < maxTubes; i++) {
-        tubesPos[i].x = screenWidth/2 + 280 * i;
+        tubesPos[i].x = screenWidth / 2 + 280 * i;
         tubesPos[i].y = -GetRandomValue(0, 120);
     }
-    for (int i = 0; i < maxTubes*2; i += 2) {
-        tubes[i].rec.x = tubesPos[i/2].x;
-        tubes[i].rec.y = tubesPos[i/2].y;
+    for (int i = 0; i < maxTubes * 2; i += 2) {
+        tubes[i].rec.x = tubesPos[i / 2].x;
+        tubes[i].rec.y = tubesPos[i / 2].y;
         tubes[i].rec.width = 80;
         tubes[i].rec.height = 255;
 
-        tubes[i+1].rec.x = tubesPos[i/2].x;
-        tubes[i+1].rec.y = 615 + tubesPos[i/2].y - 255;
-        tubes[i+1].rec.width = 80;
-        tubes[i+1].rec.height = 255;
+        tubes[i + 1].rec.x = tubesPos[i / 2].x;
+        tubes[i + 1].rec.y = 615 + tubesPos[i / 2].y - 255;
+        tubes[i + 1].rec.width = 80;
+        tubes[i + 1].rec.height = 255;
 
-        tubes[i/2].active = true;    
+        tubes[i / 2].active = true;
     }
 
     plr->init();
@@ -81,13 +80,14 @@ void update(Player* plr, float dt) {
 
         if (shake < 0) shake = 0;
 
-        camera.rotation = 30.0f * powf32(shake, 2.0f) * (GetRandomValue(-100, 100) / 100.0f);
-        camera.offset.x = screenWidth/2.0f + 50.0f * powf32(shake, 2.0f) * (GetRandomValue(-100, 100) / 100.0f);
-        camera.offset.y = screenHeight/2.0f + 50.0f * powf32(shake, 2.0f) * (GetRandomValue(-100, 100) / 100.0f);
-    } else {
+        camera.rotation = 30.0f * powf(shake, 2.0f) * (GetRandomValue(-100, 100) / 100.0f);
+        camera.offset.x = screenWidth / 2.0f + 50.0f * powf(shake, 2.0f) * (GetRandomValue(-100, 100) / 100.0f);
+        camera.offset.y = screenHeight / 2.0f + 50.0f * powf(shake, 2.0f) * (GetRandomValue(-100, 100) / 100.0f);
+    }
+    else {
         camera.rotation = 0.0f;
-        camera.offset.x = screenWidth/2.0f;
-        camera.offset.y = screenHeight/2.0f;
+        camera.offset.x = screenWidth / 2.0f;
+        camera.offset.y = screenHeight / 2.0f;
     }
 
     if (!plr->isAlive()) {
@@ -112,25 +112,25 @@ void update(Player* plr, float dt) {
 
     plr->update(dt);
 
-    tubeSpeed += dt/10;
+    tubeSpeed += dt / 10;
 
     for (int i = 0; i < maxTubes; i++) {
         tubesPos[i].x -= tubeSpeed;
         if (tubesPos[i].x < -80) {
             tubesPos[i].x = screenWidth + 280;
             tubesPos[i].y = -GetRandomValue(0, 120);
-            tubes[i*2].active = true;
+            tubes[i * 2].active = true;
         }
     }
 
-    for (int i = 0; i < maxTubes*2; i += 2) {
-        tubes[i].rec.x = tubesPos[i/2].x;
-        tubes[i].rec.y = tubesPos[i/2].y;
-        tubes[i+1].rec.x = tubesPos[i/2].x;
-        tubes[i+1].rec.y = 615 + tubesPos[i/2].y - 255;
+    for (int i = 0; i < maxTubes * 2; i += 2) {
+        tubes[i].rec.x = tubesPos[i / 2].x;
+        tubes[i].rec.y = tubesPos[i / 2].y;
+        tubes[i + 1].rec.x = tubesPos[i / 2].x;
+        tubes[i + 1].rec.y = 615 + tubesPos[i / 2].y - 255;
     }
 
-    for (int i = 0; i < maxTubes*2; i++) {
+    for (int i = 0; i < maxTubes * 2; i++) {
         if (CheckCollisionRecs(plr->getCollisionRec(), tubes[i].rec) ||
             (plr->getPos().y > (screenHeight - plr->getHeight())) ||
             (plr->getPos().y < 0)) {
@@ -138,27 +138,28 @@ void update(Player* plr, float dt) {
             pause = false;
             shake = 0.5f;
             PlaySound(boomSfx);
-        }else if (((tubesPos[i/2].x+40) < (plr->getPos().x + plr->getWidth()/2)) && tubes[i/2].active) {
+        }
+        else if (((tubesPos[i / 2].x + 40) < (plr->getPos().x + plr->getWidth() / 2)) && tubes[i / 2].active) {
             score++;
-            tubes[i/2].active = false;
+            tubes[i / 2].active = false;
             PlaySound(scoreSfx);
             scoreBlink = true;
         }
-    }    
+    }
 }
 
 void volumeBar() {
     if (IsKeyPressed(KEY_LEFT) && volume > 0) volume--;
     else if (IsKeyPressed(KEY_RIGHT) && volume < 10) volume++;
-    SetMasterVolume(volume/10.0f);
+    SetMasterVolume(volume / 10.0f);
 
     for (int i = 0; i < 10; i++) {
-        if (i < volume) DrawRectangle(295 + 21*i, 400, 20, 20, DARKGRAY);
-        DrawRectangleLines(295 + 21*i, 400, 20, 20, BLACK);
+        if (i < volume) DrawRectangle(295 + 21 * i, 400, 20, 20, DARKGRAY);
+        DrawRectangleLines(295 + 21 * i, 400, 20, 20, BLACK);
     }
 
     DrawText("[LEFT]          VOLUME          [RIGHT]",
-        screenWidth/2.0f - MeasureText("[LEFT]          VOL", 10), 430,
+        screenWidth / 2.0f - MeasureText("[LEFT]          VOL", 10), 430,
         10, RAYWHITE
     );
 }
@@ -170,16 +171,16 @@ void draw(Player* plr, float dt) {
     BeginMode2D(camera);
 
     plr->draw();
-    
+
     for (int i = 0; i < maxTubes; i++) {
         DrawRectangle(
-            tubes[i*2].rec.x, tubes[i*2].rec.y,
-            tubes[i*2].rec.width, tubes[i*2].rec.height,
+            tubes[i * 2].rec.x, tubes[i * 2].rec.y,
+            tubes[i * 2].rec.width, tubes[i * 2].rec.height,
             GRAY
         );
         DrawRectangle(
-            tubes[i*2 + 1].rec.x, tubes[i*2 + 1].rec.y,
-            tubes[i*2 + 1].rec.width, tubes[i*2 + 1].rec.height,
+            tubes[i * 2 + 1].rec.x, tubes[i * 2 + 1].rec.y,
+            tubes[i * 2 + 1].rec.width, tubes[i * 2 + 1].rec.height,
             GRAY
         );
     }
@@ -190,57 +191,58 @@ void draw(Player* plr, float dt) {
 
     if (!plr->isAlive()) {
         DrawRectangle(0, 0, screenWidth, screenHeight, { 130, 130, 130, 130 });
-        DrawText("Yuo ded", screenWidth/2 - MeasureText("Yuo ded", 50)/2, 150, 50, RAYWHITE);
+        DrawText("Yuo ded", screenWidth / 2 - MeasureText("Yuo ded", 50) / 2, 150, 50, RAYWHITE);
         DrawText(TextFormat("Score: %i", score),
-            screenWidth/2.0f - MeasureText(TextFormat("Score: %i", score), 20)/2.0f,
+            screenWidth / 2.0f - MeasureText(TextFormat("Score: %i", score), 20) / 2.0f,
             195, 20, RAYWHITE
         );
         DrawTextureEx(
             retryTex,
-            { screenWidth/2.0f - retryTex.width * 2.5f, screenHeight/2.0f - retryTex.height*2.5f + 50 },
+            { screenWidth / 2.0f - retryTex.width * 2.5f, screenHeight / 2.0f - retryTex.height * 2.5f + 50 },
             0, 5.0f, WHITE
         );
         DrawText("[R]",
-            screenWidth/2.0f - MeasureText("[R]", 15)/2.0f,
-            screenHeight/2.0f - retryTex.height*2.5f + 100,
+            screenWidth / 2.0f - MeasureText("[R]", 15) / 2.0f,
+            screenHeight / 2.0f - retryTex.height * 2.5f + 100,
             15, RAYWHITE
         );
     }
 
     if (pause) {
         DrawRectangle(0, 0, screenWidth, screenHeight, { 130, 130, 130, 130 });
-        DrawText("Paused", screenWidth/2 - MeasureText("Paused", 50)/2, 150, 50, RAYWHITE);
+        DrawText("Paused", screenWidth / 2 - MeasureText("Paused", 50) / 2, 150, 50, RAYWHITE);
         DrawTextureEx(
             playTex,
-            {(screenWidth/2.0f - playTex.width*5.0f)-50, screenHeight/2.0f - playTex.height*2.5f + 50},
+            { (screenWidth / 2.0f - playTex.width * 5.0f) - 50, screenHeight / 2.0f - playTex.height * 2.5f + 50 },
             0, 5, WHITE
         );
         DrawTextureEx(
             retryTex,
-            { screenWidth/2.0f + 50, screenHeight/2.0f - retryTex.height*2.5f + 50 },
+            { screenWidth / 2.0f + 50, screenHeight / 2.0f - retryTex.height * 2.5f + 50 },
             0, 5.0f, WHITE
         );
         DrawText("[P]",
-            ((screenWidth/2.0f - playTex.width * 2.5f) - 50) - MeasureText("[P]", 15)/2.0f,
-            screenHeight/2.0f - playTex.height*2.5f + 100,
+            ((screenWidth / 2.0f - playTex.width * 2.5f) - 50) - MeasureText("[P]", 15) / 2.0f,
+            screenHeight / 2.0f - playTex.height * 2.5f + 100,
             15, RAYWHITE
         );
         DrawText("[R]",
-            screenWidth/2.0f + retryTex.width * 2.5f + 50 - MeasureText("[R]", 15)/2.0f,
-            screenHeight/2.0f - retryTex.height*2.5f + 100,
+            screenWidth / 2.0f + retryTex.width * 2.5f + 50 - MeasureText("[R]", 15) / 2.0f,
+            screenHeight / 2.0f - retryTex.height * 2.5f + 100,
             15, RAYWHITE
         );
 
         volumeBar();
-    } else {
+    }
+    else {
         DrawTextureEx(
             pauseTex,
-            {(screenWidth - pauseTex.width*5.0f) - 5, 5},
+            { (screenWidth - pauseTex.width * 5.0f) - 5, 5 },
             0, 5, WHITE
         );
         DrawText("[P]",
-            (screenWidth - pauseTex.width*2.5f) - 5 - MeasureText("[P]", 15)/2.0f,
-            pauseTex.height*5.0f + 10,
+            (screenWidth - pauseTex.width * 2.5f) - 5 - MeasureText("[P]", 15) / 2.0f,
+            pauseTex.height * 5.0f + 10,
             15, RAYWHITE
         );
     }
@@ -258,15 +260,15 @@ void mainMenu() {
     ClearBackground(DARKGRAY);
 
     DrawRectangle(0, 0, screenWidth, screenHeight, { 130, 130, 130, 130 });
-    DrawText("Floppy Square", screenWidth/2 - MeasureText("Floppy Square", 50)/2, 150, 50, RAYWHITE);
+    DrawText("Floppy Square", screenWidth / 2 - MeasureText("Floppy Square", 50) / 2, 150, 50, RAYWHITE);
     DrawTextureEx(
         playTex,
-        { screenWidth/2.0f - playTex.width * 2.5f, screenHeight/2.0f - playTex.height*2.5f + 50 },
+        { screenWidth / 2.0f - playTex.width * 2.5f, screenHeight / 2.0f - playTex.height * 2.5f + 50 },
         0, 5.0f, WHITE
     );
     DrawText("[ENTER]",
-        screenWidth/2.0f - MeasureText("[ENTER]", 15)/2.0f,
-        screenHeight/2.0f - playTex.height*2.5f + 100,
+        screenWidth / 2.0f - MeasureText("[ENTER]", 15) / 2.0f,
+        screenHeight / 2.0f - playTex.height * 2.5f + 100,
         15, RAYWHITE
     );
 
@@ -282,7 +284,7 @@ void gameLoop(Player* plr) {
     }
 
     float dt = GetFrameTime();
-    
+
     update(plr, dt);
     draw(plr, dt);
 }
